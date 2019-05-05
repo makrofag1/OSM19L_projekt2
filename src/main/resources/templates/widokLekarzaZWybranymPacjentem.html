@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .navigationbar{
+            overflow: hidden;
+            background-color: #333;
+            padding: 1em;
+        }
+        .buttonscolumn{
+            float: left;
+            width: 10%;
+
+        }
+        .tablecolumn{
+            float: left;
+            width: 70%;
+        }
+        .formcolumn{
+            float: left;
+            width: 20%;
+
+        }
+
+        .form{
+            padding-left: 5%;
+        }
+
+
+        .btn-group button {
+            background-color: #4CAF50; /* Green background */
+            border: 1px solid green; /* Green border */
+            color: white; /* White text */
+            padding: 10px 24px; /* Some padding */
+            cursor: pointer; /* Pointer/hand icon */
+            display: block; /* Make the buttons appear below each other */
+            margin: 0.5em;
+            min-width: 114px;
+        }
+
+        .btn-group button:not(:last-child) {
+            border-bottom: none; /* Prevent double borders */
+        }
+        /* Add a background color on hover */
+        .btn-group button:hover {
+            background-color: #3e8e41;
+        }
+
+        #patients_table {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #patients_table td, #patients_table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #patients_table tr:nth-child(even){background-color: #f2f2f2;}
+
+        #patients_table tr:hover {background-color: #ddd;}
+
+        #patients_table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {background-color: #f1f1f1}
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
+
+    </style>
+</head>
+<body>
+<div class="navigationbar">
+    <font color="white"><strong style="float: left">Jesteś zalogowany jako lekarz</strong></font>
+    <button type="button" style="float: right" >Wyloguj się</button>
+</div>
+
+<div class="buttonscolumn">
+    <div class="btn-group">
+        <form method = "POST" action = "/add">
+            <button type="input" value="Redirect Page">
+                Dodaj pacjenta
+            </button>
+        </form>
+        <form method = "POST" action = "/delete">
+            <button type="input" value="Redirect Page">Usuń pacjenta</button>
+        </form>
+        <button type="input">Zapisz zmiany</button>
+        <button type="input">Dodaj badanie</button>
+        <button type="input">Usuń badanie</button>
+
+        <form method = "POST" action = "/add">
+            <table>
+                <tr>
+                    <td>
+                        <input type = "submit" value = "Redirect Page"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+    </div>
+</div>
+
+<div class="tablecolumn">
+
+
+    <select>
+        <option th:each="examination, iStat : ${examinations}"
+                th:value="${iStat}"
+                th:text="${examination.examinationName}">
+        </option>
+    </select>
+
+    <span class="label success">Success</span>
+
+    <table th:id="patients_table">
+
+        <tr>
+            <th>Imię pacjenta</th>
+            <th>Nazwisko pacjenta</th>
+            <th>Dawka</th>
+            <th>Grupa</th>
+        </tr>
+
+        <tr th:if="${patients.empty}">
+            <td colspan="4"> Brak pacjentów w bazie </td>
+        </tr>
+
+        <tr th:each="patient : ${patients}">
+            <td th:text="${patient.patientId}" style="display: none"></td>
+            <td th:text="${patient.name}"></td>
+            <td th:text="${patient.surname}"></td>
+            <td th:text="${patient.dosage}"></td>
+            <td th:text="${patient.group}"></td>
+        </tr>
+
+
+    </table>
+
+</div>
+
+<div class="formcolumn"
+     th:id="kolumnaFormularza"
+     th:each="patient : ${patientSelected}">
+
+    <div class="form">
+        <input th:type="text"
+               th:name="idInput"
+               th:id="idInput"
+               th:value="${patient.patientId}"><br><br>
+        Imię:<input
+            th:type="text"
+            th:name="nameInput"
+            th:id="nameInput"
+            th:value="${patient.name}"><br><br>
+        Nazwisko:<input
+            th:type="text"
+            th:name="surnameInput"
+            th:id="surnameInput"
+            th:value="${patient.surname}"><br><br>
+        PESEL:<input
+            th:type="text"
+            th:name="peselInput"
+            th:id="peselInput"
+            th:value="${patient.pesel}"><br><br>
+        Nazwa badania:<input
+            th:type="text"
+            th:name="examinationInput"
+            th:id="examinationInput"
+            th:value="${patient.examinationName}"><br><br>
+        Dawka:<input
+            th:type="text"
+            th:name="dosageInput"
+            th:id="dosageInput"
+            th:value="${patient.dosage}"><br><br>
+        Grupa:<input
+            th:type="text"
+            th:name="groupInput"
+            th:id="groupInput"
+            th:value="${patient.group}"><br><br>
+        Obserwacja:<input
+            th:type="text"
+            th:name="observationInput"
+            th:id="observationInput"
+            th:value="${patient.observation}"><br><br>
+
+    </div>
+
+    <div class="btn-group">
+        <form onclick="zapiszZmiany()">
+            <button type="input" >
+                Zapisz zmiany
+            </button>
+        </form>
+        <form>
+            <button type="input">
+                Usuń pacjenta
+            </button>
+        </form>
+        <form>
+            <button type="input">
+                Anuluj
+            </button>
+        </form>
+    </div>
+
+</div>
+
+
+<script>
+    var table = document.getElementById('patients_table'),rIndex;
+    for(var i = 0; i < table.rows.length; i++){
+        table.rows[i].onclick = function(){
+            rIndex = this.rowIndex;
+            var id = table.rows[rIndex].cells[0].innerHTML.toString();
+            window.location.replace("/show/selectedRow?id="+id);
+        }
+    }
+
+    function zapiszZmiany() {
+        var id = document.getElementById('idInput').value;
+        var name = document.getElementById('nameInput').value;
+        var surname = document.getElementById('surnameInput').value;
+        var pesel = document.getElementById('peselInput').value;
+        var examination = document.getElementById('examinationInput').value;
+        var dosage = document.getElementById('dosageInput').value;
+        var group = document.getElementById('groupInput').value;
+        var observation = document.getElementById('observationInput').value;
+        var variables = "?"+
+            "name="+name.toString()+"&"+
+            "id="+id.toString()+"&"+
+            "surname="+surname.toString()+"&"+
+            "pesel="+pesel.toString()+"&"+
+            "examination="+examination.toString()+"&"+
+            "dosage="+dosage.toString()+"&"+
+            "group="+group.toString()+"&"+
+            "observation="+observation.toString();
+        /*var form = $('<form th:action="/modifyPatient' + variables + '" th:method="post">' +
+            '<input type="text" name="modifyPatient" value="/modifyPatient' + variables + '" />' +
+            '</form>');
+        $('body').append(form);
+        form.submit();*/
+        window.location.replace("/show/selectedRow?id="+id);
+
+    }
+    D:\Studia\IBM-6\OSM\Projekt 2\projektDrugi
+
+</script>
+
+</body>
+</html>
